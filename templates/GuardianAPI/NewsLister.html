@@ -1,0 +1,22 @@
+{% extends 'GuardianAPI/base.html' %}
+{% load static %}
+{% block title %}News Lister{% endblock %}
+{% block static %}
+<link rel="stylesheet" href="{% static 'css/NewsLister.css' %}">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="{% static 'js/NewsLister.js' %}"></script>
+{% endblock %}
+{% block content %}
+
+<h2>News Letter</h2>
+
+<!--Make sure the form has the autocomplete function switched off:-->
+<form autocomplete="off" method="POST">
+    {% csrf_token %}
+    <div class="autocomplete" style="width:300px;">
+        <input id="myInput" type="text" name="name" placeholder="Search">
+    </div>
+    <input type="submit">
+</form>
+
+{% endblock %}
