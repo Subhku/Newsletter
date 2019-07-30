@@ -9,16 +9,17 @@ from django.template.loader import render_to_string
 
 def search(request):
     if request.method == 'POST':
-        name = '+'.join(request.POST['name'].split())
+        search_data = request.POST['name']
+        name = '+'.join(search_data.split())
         endurl = 'http://content.guardianapis.com/search?api-key='+settings.API_KEY+'&q='+name+'&show-fields=thumbnail,headline'
         r = requests.get(endurl)
         r = r.json()
         totalResult = len(r['response']['results'])
         data = []
-
         for i in range(totalResult):
             x = {}
             x['webUrl'] = r['response']['results'][i]['webUrl']
+            x['date'] = r['response']['results'][i]['webPublicationDate'][0:10]
             content = requests.get(x['webUrl']).content
             thumbnail = BeautifulSoup(content,'html.parser').find('img', {'class':'maxed responsive-img'})
             if thumbnail != None:
@@ -27,7 +28,7 @@ def search(request):
                 x['thumbnail'] = None
             x['headline'] = BeautifulSoup(content,'html.parser').find('h1', {'class':"content__headline"}).get_text()
             data.append(x)
-        return render(request, 'GuardianAPI/Result.html', {'guardian_data':data})
+        return render(request, 'GuardianAPI/index.html', {'guardian_data':data,'search_data':search_data})
     if request.is_ajax():
         print(request.GET['search_text'])
         url = 'http://suggestqueries.google.com/complete/search'
